@@ -96,6 +96,11 @@
 /* ============================ GLOBAL BASE ============================ */
 html { scroll-behavior: smooth; }
 
+html, body, #root {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 @layer base {
   * { border-color: var(--color-border); }
   body {
@@ -103,7 +108,6 @@ html { scroll-behavior: smooth; }
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);

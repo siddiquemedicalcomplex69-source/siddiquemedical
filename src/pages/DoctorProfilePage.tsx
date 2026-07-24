@@ -158,7 +158,7 @@ export default function DoctorProfilePage() {
               <p className="mt-1 text-sm text-muted-foreground">
                 Select a date and pick from available time slots.
               </p>
-              <div className="mt-6">
+              <div className="mt-6 w-full min-w-0">
                 <SlotPicker
                   doctorId={doctor.doctor_id}
                   slotDurationMin={doctor.slot_duration_min}
