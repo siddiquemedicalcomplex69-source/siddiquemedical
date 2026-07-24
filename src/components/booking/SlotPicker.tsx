@@ -88,7 +88,7 @@ export function SlotPicker({ doctorId, slotDurationMin, onSelect }: Props) {
             The doctor is not available on this day. Please pick another date.
           </p>
         ) : (
-          <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+          <div className="mt-3 grid grid-cols-2 gap-2 min-[400px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5">
             {slots.map((s) => (
               <Button
                 key={s.start_time}

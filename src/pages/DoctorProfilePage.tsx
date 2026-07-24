@@ -43,7 +43,7 @@ export default function DoctorProfilePage() {
         <section className="mx-auto grid w-full max-w-6xl gap-6 px-4 pb-16 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-6 slide-in-left">
             <Card className="overflow-hidden border-border">
-              <CardContent className="flex flex-col gap-6 p-8 md:flex-row md:items-start">
+              <CardContent className="flex flex-col gap-6 p-4 sm:p-6 md:p-8 md:flex-row md:items-start">
                 <Skeleton className="h-28 w-28 rounded-full shrink-0" />
                 <div className="flex-1 space-y-4">
                   <Skeleton className="h-8 w-48" />
@@ -117,7 +117,7 @@ export default function DoctorProfilePage() {
       <section className="mx-auto grid w-full max-w-6xl gap-6 px-4 pb-16 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6 slide-in-left">
           <Card className="overflow-hidden border-border hover-lift">
-            <CardContent className="flex flex-col gap-6 p-8 md:flex-row md:items-start">
+            <CardContent className="flex flex-col gap-6 p-4 sm:p-6 md:p-8 md:flex-row md:items-start">
               <Avatar className="h-28 w-28 rounded-full ring-4 ring-[#14b8a6]/40 pulse-ring shrink-0">
                 <AvatarImage src={doctor.avatar_url || undefined} alt={doctor.full_name} />
                 <AvatarFallback className="rounded-full bg-gradient-to-br from-[#0b1f3a] to-[#14b8a6] text-white text-xl font-bold">
@@ -152,8 +152,8 @@ export default function DoctorProfilePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-border">
-            <CardContent className="p-8">
+          <Card className="border-border overflow-hidden">
+            <CardContent className="p-4 sm:p-6 md:p-8">
               <h2 className="text-xl font-bold text-[#0b1f3a]">Book an appointment</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Select a date and pick from available time slots.
