@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Stethoscope, Facebook, Instagram, Twitter } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getGlobalSettings } from "@/lib/api";
 
 export function Footer() {
+  const { data: settings } = useQuery({
+    queryKey: ["globalSettings"],
+    queryFn: getGlobalSettings,
+  });
+
   return (
     <footer className="relative bg-[#0b1f3a] text-white/80">
       <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-transparent via-[#14b8a6] to-transparent" />
@@ -11,7 +18,7 @@ export function Footer() {
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#14b8a6] text-white shadow-lg">
               <Stethoscope className="h-5 w-5" />
             </span>
-            <span className="text-base font-bold text-white">Siddique Medical Complex</span>
+            <span className="text-base font-bold text-white">{settings?.hospital_name || "Siddique Medical Complex"}</span>
           </div>
           <p className="mt-4 max-w-sm text-sm text-white/60 leading-relaxed">
             A trusted multi-specialty hospital delivering compassionate, evidence-based care for every family.
@@ -49,13 +56,13 @@ export function Footer() {
           <ul className="mt-4 space-y-3 text-sm text-white/60">
             <li className="flex items-start gap-2.5 hover:text-[#14b8a6] transition-colors">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#14b8a6]" />
-              12 Jinnah Avenue, Lahore
+              {settings?.address || "12 Jinnah Avenue, Lahore"}
             </li>
             <li className="flex items-center gap-2.5 hover:text-[#14b8a6] transition-colors">
-              <Phone className="h-4 w-4 text-[#14b8a6]" /> +92 42 1234 5678
+              <Phone className="h-4 w-4 text-[#14b8a6]" /> {settings?.contact_number || "+92 42 1234 5678"}
             </li>
             <li className="flex items-center gap-2.5 hover:text-[#14b8a6] transition-colors">
-              <Mail className="h-4 w-4 text-[#14b8a6]" /> care@siddiquemc.example
+              <Mail className="h-4 w-4 text-[#14b8a6]" /> {settings?.emergency_email || "care@siddiquemc.example"}
             </li>
           </ul>
         </div>
@@ -65,7 +72,7 @@ export function Footer() {
           className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(20,184,166,0.6),transparent)] bg-[length:200%_100%]"
           style={{ animation: "shimmer 3s linear infinite" }}
         />
-        © {new Date().getFullYear()} Siddique Medical Complex. All rights reserved.
+        © {new Date().getFullYear()} {settings?.hospital_name || "Siddique Medical Complex"}. All rights reserved.
       </div>
     </footer>
   );

@@ -89,11 +89,11 @@ export function Navbar() {
 
           <div className="hidden items-center gap-3 md:flex">
             <a
-              href="tel:+924212345678"
+              href={`tel:${settings?.contact_number || "+924212345678"}`}
               className="flex items-center gap-1.5 text-sm font-semibold text-[#0b1f3a] hover:text-[#14b8a6] transition-colors"
             >
               <Phone className="h-4 w-4" />
-              042-1234-5678
+              {settings?.contact_number || "042-1234-5678"}
             </a>
             {ready && !user && (
               <>
