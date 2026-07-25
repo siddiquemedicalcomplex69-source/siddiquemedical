@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
-import { FlaskConical, Phone, CheckCircle2, XCircle, CalendarDays } from "lucide-react";
+import { FlaskConical, Phone, CheckCircle2, XCircle, CalendarDays, Loader2 } from "lucide-react";
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
 import { Reveal, Stagger } from "@/components/shared/Reveal";
@@ -38,6 +38,7 @@ function LabPortalPage() {
   
   const [tab, setTab] = useState<LabBookingStatus | "all">("all");
   const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [completingId, setCompletingId] = useState<string | null>(null);
 
   const updateMutation = useMutation({
     mutationFn: ({ id, updates }: { id: string; updates: any }) => updateLabBooking(id, updates),
@@ -101,30 +102,36 @@ function LabPortalPage() {
   };
 
   const markCompleted = async (id: string) => {
-    const booking = items.find(i => i.id === id);
-    if (!booking) return;
+    if (completingId) return;
+    setCompletingId(id);
+    try {
+      const booking = items.find(i => i.id === id);
+      if (!booking) return;
 
-    await updateMutation.mutateAsync({ id, updates: { status: "completed" } });
-    
-    if (booking.report_collection_date) {
-      const formattedReportDate = format(parseISO(booking.report_collection_date), "EEE, d MMM");
-      await notify({
-        user_id : booking.patient_id,
+      await updateMutation.mutateAsync({ id, updates: { status: "completed" } });
+      
+      if (booking.report_collection_date) {
+        const formattedReportDate = format(parseISO(booking.report_collection_date), "EEE, d MMM");
+        await notify({
+          user_id : booking.patient_id,
+          type    : 'lab_report_date_set',
+          title   : 'Process Complete',
+          message : `Your ${booking.test_name} process is complete. Please visit us on ${formattedReportDate} to collect your report.`,
+          metadata: { lab_booking_id: booking.id }
+        });
+      }
+
+      await notifyAdmins({
         type    : 'lab_report_date_set',
-        title   : 'Process Complete',
-        message : `Your ${booking.test_name} process is complete. Please visit us on ${formattedReportDate} to collect your report.`,
+        title   : 'Lab Test Completed',
+        message : `Lab test ${booking.test_name} for ${booking.patient_name} has been marked as completed.`,
         metadata: { lab_booking_id: booking.id }
       });
+
+      toast.success("Booking marked as completed");
+    } finally {
+      setCompletingId(null);
     }
-
-    await notifyAdmins({
-      type    : 'lab_report_date_set',
-      title   : 'Lab Test Completed',
-      message : `Lab test ${booking.test_name} for ${booking.patient_name} has been marked as completed.`,
-      metadata: { lab_booking_id: booking.id }
-    });
-
-    toast.success("Booking marked as completed");
   };
 
   const cancel = async (id: string) => {
@@ -242,8 +249,20 @@ function LabPortalPage() {
                     <>
                       <DatesRow sample={b.sample_collection_date} report={b.report_collection_date} />
                       <div className="mt-4 flex justify-end">
-                        <Button onClick={() => markCompleted(b.id)} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                          <CheckCircle2 className="mr-1.5 h-4 w-4" /> Mark as Completed
+                        <Button 
+                          disabled={completingId === b.id}
+                          onClick={() => markCompleted(b.id)} 
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                        >
+                          {completingId === b.id ? (
+                            <>
+                              <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Completing...
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="mr-1.5 h-4 w-4" /> Mark as Completed
+                            </>
+                          )}
                         </Button>
                       </div>
                     </>
