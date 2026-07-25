@@ -78,7 +78,7 @@ export function BookTestModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="w-[95vw] sm:max-w-[480px] max-h-[85svh] overflow-y-auto top-4 translate-y-0 sm:top-[50%] sm:translate-y-[-50%]">
         <DialogHeader>
           <DialogTitle className="text-[#0b1f3a]">Confirm Lab Test Booking</DialogTitle>
           <DialogDescription>Review details and pick your preferred booking date.</DialogDescription>
