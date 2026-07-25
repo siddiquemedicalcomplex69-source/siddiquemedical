@@ -362,7 +362,11 @@ export async function adminCreateDoctor(params: {
   return data;
 }
 
-export async function updateDoctor(doctorId: string, updates: any) {
+export async function updateDoctor(doctorId: string, profileId: string | null | undefined, updates: any, name?: string) {
+  if (name && profileId) {
+    const { error: pErr } = await supabase.from('profiles').update({ full_name: name }).eq('id', profileId);
+    if (pErr) throw pErr;
+  }
   const { error } = await supabase
     .from("doctors")
     .update(updates)

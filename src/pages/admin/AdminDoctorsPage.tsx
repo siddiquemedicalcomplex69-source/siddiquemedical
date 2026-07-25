@@ -62,14 +62,14 @@ export default function AdminDoctorsPage() {
   const saveMutation = useMutation({
     mutationFn: async (data: any) => {
       if (editingId) {
-        return updateDoctor(editingId, {
+        return updateDoctor(editingId, editingProfileId, {
           department_id: data.doc_department_id,
           specialty: data.doc_specialty,
           qualification: data.doc_qualification,
           experience_yrs: data.doc_experience,
           consultation_fee: data.doc_fee,
           is_visiting: data.doc_is_visiting,
-        });
+        }, data.doc_name);
       } else {
         if (!user) throw new Error("Admin not authenticated");
         return adminCreateDoctor({ ...data, admin_uid: user.id });
@@ -96,8 +96,11 @@ export default function AdminDoctorsPage() {
     );
   }, [doctors, query]);
 
+  const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
+
   const resetForm = () => {
     setEditingId(null);
+    setEditingProfileId(null);
     setName("");
     setEmail("");
     setPassword("");
@@ -111,7 +114,8 @@ export default function AdminDoctorsPage() {
   };
 
   const handleEdit = (doc: any) => {
-    setEditingId(doc.doctor_id); // actually profile_id for updates
+    setEditingId(doc.doctor_id); 
+    setEditingProfileId(doc.profile_id);
     setName(doc.full_name);
     // email/password cannot be edited here
     setDepartmentId(doc.department_id);
@@ -171,7 +175,7 @@ export default function AdminDoctorsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
                     <Label>Full Name</Label>
-                    <Input value={name} onChange={(e) => setName(e.target.value)} required disabled={!!editingId || saveMutation.isPending} />
+                    <Input value={name} onChange={(e) => setName(e.target.value)} required disabled={saveMutation.isPending} />
                   </div>
                   
                   {!editingId && (
