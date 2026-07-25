@@ -52,7 +52,7 @@ export function SlotPicker({ doctorId, slotDurationMin, onSelect }: Props) {
     <div className="space-y-4">
       <div>
         <h3 className="text-sm font-semibold text-foreground">Select a date</h3>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-2 max-w-full">
           {days.map((d) => {
             const active = isSameDay(d, selectedDate);
             return (
@@ -88,7 +88,7 @@ export function SlotPicker({ doctorId, slotDurationMin, onSelect }: Props) {
             The doctor is not available on this day. Please pick another date.
           </p>
         ) : (
-          <div className="mt-3 grid grid-cols-2 gap-2 min-[400px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5">
+          <div className="mt-3 grid grid-cols-2 gap-2 min-[360px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5">
             {slots.map((s) => (
               <Button
                 key={s.start_time}

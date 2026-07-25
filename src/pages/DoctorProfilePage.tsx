@@ -115,7 +115,7 @@ export default function DoctorProfilePage() {
       </div>
 
       <section className="mx-auto grid w-full max-w-6xl gap-6 px-4 pb-16 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6 slide-in-left">
+        <div className="lg:col-span-2 space-y-6 slide-in-left min-w-0 w-full">
           <Card className="overflow-hidden border-border hover-lift">
             <CardContent className="flex flex-col gap-6 p-4 sm:p-6 md:p-8 md:flex-row md:items-start">
               <Avatar className="h-28 w-28 rounded-full ring-4 ring-[#14b8a6]/40 pulse-ring shrink-0">
@@ -124,7 +124,7 @@ export default function DoctorProfilePage() {
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <h1 className="text-3xl font-bold text-[#0b1f3a]">{doctor.full_name}</h1>
                 </div>
@@ -134,7 +134,7 @@ export default function DoctorProfilePage() {
                     <Badge
                       key={p}
                       variant="secondary"
-                      className="rounded-full bg-[#14b8a6]/10 text-[#0d766e] hover:bg-[#14b8a6]/20 border-0 fade-up"
+                      className="h-auto whitespace-normal text-left rounded-full bg-[#14b8a6]/10 text-[#0d766e] hover:bg-[#14b8a6]/20 border-0 fade-up"
                       style={{ animationDelay: `${i * 80}ms` }}
                     >
                       {p}
@@ -169,7 +169,7 @@ export default function DoctorProfilePage() {
           </Card>
         </div>
 
-        <aside className="space-y-4 slide-in-right">
+        <aside className="space-y-4 slide-in-right min-w-0 w-full">
           <Card className="border-border hover-lift overflow-hidden">
             {doctor.is_visiting && doctor.consultation_fee > 0 && (
             <div className="bg-gradient-to-br from-[#0b1f3a] to-[#14b8a6] p-6 text-white">
