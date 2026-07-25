@@ -27,11 +27,13 @@ export function BookTestModal({
   const { user } = useAuth();
   const today = new Date().toISOString().slice(0, 10);
   const [date, setDate] = useState(today);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!item) return null;
 
   const handleConfirm = async () => {
-    if (!user) return;
+    if (!user || isSubmitting) return;
+    setIsSubmitting(true);
     
     try {
       const booking = await bookLabTest({
@@ -73,6 +75,8 @@ export function BookTestModal({
       onOpenChange(false);
     } catch (err: any) {
       toast.error("Failed to book test.", { description: err.message });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -119,9 +123,9 @@ export function BookTestModal({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button className="bg-[#14b8a6] hover:bg-[#0d9488] text-white" onClick={handleConfirm}>
-            Confirm Booking
+          <Button variant="outline" disabled={isSubmitting} onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button disabled={isSubmitting} className="bg-[#14b8a6] hover:bg-[#0d9488] text-white" onClick={handleConfirm}>
+            {isSubmitting ? "Booking..." : "Confirm Booking"}
           </Button>
         </DialogFooter>
       </DialogContent>
