@@ -24,6 +24,7 @@ type Patient = {
   phone: string | null;
   registered_at: string;
   total_appointments: number;
+  total_lab_tests: number;
   is_active: boolean;
 };
 
@@ -89,6 +90,7 @@ export default function AdminPatientsPage() {
                     <TableHead>Phone</TableHead>
                     <TableHead>Registered</TableHead>
                     <TableHead>Total Bookings</TableHead>
+                    <TableHead>Lab Tests</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Access</TableHead>
                   </TableRow>
@@ -96,13 +98,13 @@ export default function AdminPatientsPage() {
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="p-0 border-0">
-                        <TableSkeleton columns={7} rows={5} />
+                      <TableCell colSpan={8} className="p-0 border-0">
+                        <TableSkeleton columns={8} rows={5} />
                       </TableCell>
                     </TableRow>
                   ) : filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="py-10">
+                      <TableCell colSpan={8} className="py-10">
                         <EmptyState 
                           title="No patients found" 
                           description="Try adjusting your search query."
@@ -123,6 +125,7 @@ export default function AdminPatientsPage() {
                       <TableCell>{p.phone || "N/A"}</TableCell>
                       <TableCell>{format(parseISO(p.registered_at), "dd MMM yyyy")}</TableCell>
                       <TableCell>{p.total_appointments}</TableCell>
+                      <TableCell>{p.total_lab_tests}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className={p.is_active ? "border-green-200 bg-green-100 text-green-800" : "border-red-200 bg-red-100 text-red-800"}>
                           {p.is_active ? "Active" : "Suspended"}

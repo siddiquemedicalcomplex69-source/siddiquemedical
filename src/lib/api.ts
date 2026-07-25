@@ -297,13 +297,14 @@ export async function getAllPatients() {
   const { data, error } = await supabase.rpc('admin_get_patients_with_email');
   if (error) throw error;
 
-  // We need to also fetch appointment counts for each patient
-  // This could be a view or a separate query. For now, we fetch all appointments and group.
+  // We need to also fetch appointment and lab test counts for each patient
   const { data: allAppts } = await supabase.from("appointments").select("patient_id");
+  const { data: allLabs } = await supabase.from("lab_bookings").select("patient_id");
   
   return data.map((p: any) => ({
     ...p,
-    total_appointments: allAppts?.filter(a => a.patient_id === p.id).length || 0
+    total_appointments: allAppts?.filter(a => a.patient_id === p.id).length || 0,
+    total_lab_tests: allLabs?.filter(l => l.patient_id === p.id).length || 0
   }));
 }
 
