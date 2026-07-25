@@ -54,14 +54,14 @@ export function BookTestModal({
         metadata: { lab_booking_id: booking.id }
       });
 
-      const { data: labStaff } = await supabase
+      const { data: admins } = await supabase
         .from('profiles')
         .select('id')
-        .eq('role', 'lab_staff');
+        .eq('role', 'admin');
 
-      for (const staff of (labStaff as any[]) ?? []) {
+      for (const admin of (admins as any[]) ?? []) {
         await notify({
-          user_id : staff.id,
+          user_id : admin.id,
           type    : 'new_lab_booking',
           title   : 'New Lab Test Booking',
           message : `${patientName} has booked a ${testName} test. Please review and set a sample collection date.`,
