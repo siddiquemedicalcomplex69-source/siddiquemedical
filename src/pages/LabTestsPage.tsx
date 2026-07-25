@@ -30,7 +30,7 @@ function LabTestsPage() {
     queryFn: getLabCategories as any
   });
 
-  const { data: allTests = [] as LabTest[] } = useQuery<LabTest[]>({
+  const { data: allTests = [] as LabTest[], isLoading } = useQuery<LabTest[]>({
     queryKey: ['labTests'],
     queryFn: getLabTests as any
   });
@@ -106,7 +106,13 @@ function LabTestsPage() {
         </Reveal>
 
         {/* Tests grid */}
-        {tests.length === 0 ? (
+        {isLoading ? (
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="h-48 rounded-xl skeleton" />
+            ))}
+          </div>
+        ) : tests.length === 0 ? (
           <Reveal>
             <div className="mt-10 rounded-2xl border border-dashed p-10 text-center">
               <p className="text-muted-foreground">No tests found for your search.</p>
@@ -116,7 +122,7 @@ function LabTestsPage() {
             </div>
           </Reveal>
         ) : (
-          <Stagger className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 animate-fade-in">
             {tests.map((t) => (
               <Card key={t.id} className="group border-2 hover:border-[#14b8a6]/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <CardContent className="p-5 flex h-full flex-col">
@@ -133,7 +139,7 @@ function LabTestsPage() {
                     </span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground line-clamp-2">{t.description}</p>
-                  <div className="mt-4 flex items-end justify-between">
+                  <div className="mt-4 flex items-end justify-between mt-auto pt-4">
                     <div className="text-2xl font-bold text-[#14b8a6]">Rs. {t.price.toLocaleString()}</div>
                   </div>
                   <Button
@@ -145,7 +151,7 @@ function LabTestsPage() {
                 </CardContent>
               </Card>
             ))}
-          </Stagger>
+          </div>
         )}
 
         {/* How it works */}
