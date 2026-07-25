@@ -107,7 +107,7 @@ export function BookingModal({ open, onOpenChange, doctor, date, slot }: Props) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] sm:w-full sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] sm:w-full sm:max-w-[500px] max-h-[85svh] overflow-y-auto top-4 translate-y-0 sm:top-[50%] sm:translate-y-[-50%]">
         <DialogHeader>
           <DialogTitle>Confirm your appointment</DialogTitle>
           <DialogDescription>Review the details before confirming.</DialogDescription>
