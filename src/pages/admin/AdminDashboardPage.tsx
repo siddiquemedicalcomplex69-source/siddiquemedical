@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Users, UserPlus, Activity, Calendar as CalendarIcon, Settings, BarChart2, FlaskConical } from "lucide-react";
+import { Users, UserPlus, Activity, Calendar as CalendarIcon, Settings, BarChart2, FlaskConical, ClipboardList } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
@@ -47,6 +47,7 @@ export default function AdminDashboardPage() {
     { to: "/admin/reports", label: "Analytics & Reports", icon: BarChart2 },
     { to: "/admin/settings", label: "Global Settings", icon: Settings },
     { to: "/admin/tests", label: "Manage Lab Tests", icon: FlaskConical },
+    { to: "/lab/portal", label: "Lab Bookings", icon: ClipboardList },
   ] as const;
 
   const isLoading = loadApt || loadDoc || loadPat || loadDept;
