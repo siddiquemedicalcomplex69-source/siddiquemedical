@@ -39,7 +39,7 @@ function LabTestsPage() {
     const query = q.trim().toLowerCase();
     return allTests.filter((t) => t.is_active
       && (cat === "all" || t.category_id === cat)
-      && (!query || t.name.toLowerCase().includes(query) || t.code.toLowerCase().includes(query)));
+      && (!query || t.name?.toLowerCase().includes(query) || t.code?.toLowerCase().includes(query)));
   }, [q, cat, allTests]);
 
   const openBook = (b: BookItem) => {

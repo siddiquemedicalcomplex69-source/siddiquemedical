@@ -83,7 +83,7 @@ function TestsTab({ tests, categories }: { tests: LabTest[], categories: LabTest
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
-    return tests.filter((t) => !query || t.name.toLowerCase().includes(query) || t.code.toLowerCase().includes(query));
+    return tests.filter((t) => !query || t.name?.toLowerCase().includes(query) || t.code?.toLowerCase().includes(query));
   }, [tests, q]);
 
   const toggleActive = (id: string) => {
