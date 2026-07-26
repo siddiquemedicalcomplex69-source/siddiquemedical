@@ -275,20 +275,27 @@ export async function updateProfile(userId: string, updates: any) {
 }
 
 export async function uploadAvatar(userId: string, file: File): Promise<string> {
-  const ext = file.name.split('.').pop();
-  const filePath = `${userId}/avatar-${Date.now()}.${ext}`;
-  
-  const { error: uploadError } = await supabase.storage
-    .from("avatars")
-    .upload(filePath, file, { upsert: true });
+  const cloudName = "aixjey0j";
+  const uploadPreset = "tzdlzovn";
 
-  if (uploadError) throw uploadError;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+  // We can attach the user ID as a public_id prefix or folder, but letting Cloudinary auto-generate is easiest.
+  formData.append("folder", `hospital-foundation/avatars/${userId}`);
 
-  const { data } = supabase.storage
-    .from("avatars")
-    .getPublicUrl(filePath);
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: "POST",
+    body: formData,
+  });
 
-  return data.publicUrl;
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error?.message || "Failed to upload image to Cloudinary");
+  }
+
+  const data = await response.json();
+  return data.secure_url; // This is the fast, optimized Cloudinary URL
 }
 
 // --- PHASE 3 ADMIN API ---
