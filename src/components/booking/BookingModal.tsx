@@ -8,12 +8,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
 import { formatTime12, type TimeSlot } from "@/lib/slots";
 import type { DoctorCard } from "@/types/database";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { bookAppointment } from "@/lib/api";
+import { bookAppointment, updateProfile } from "@/lib/api";
 import { notify, notifyAdmins } from "@/lib/notify";
 import { supabase } from "@/lib/supabase";
 
@@ -30,6 +31,7 @@ export function BookingModal({ open, onOpenChange, doctor, date, slot }: Props) 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [reason, setReason] = useState("");
+  const [phone, setPhone] = useState(user?.phone || "");
 
   const mutation = useMutation({
     mutationFn: bookAppointment,
@@ -103,6 +105,12 @@ export function BookingModal({ open, onOpenChange, doctor, date, slot }: Props) 
       status: "pending",
       fee_charged: doctor.consultation_fee,
     });
+    
+    if (phone.trim() && phone.trim() !== user.phone) {
+      updateProfile(user.id, { phone: phone.trim() }).catch(err => {
+        console.error("Failed to update profile phone", err);
+      });
+    }
   }
 
   return (
@@ -118,6 +126,14 @@ export function BookingModal({ open, onOpenChange, doctor, date, slot }: Props) 
           <Row label="Date" value={format(date, "EEEE, d MMMM yyyy")} />
           <Row label="Time" value={`${formatTime12(slot.start_time)} – ${formatTime12(slot.end_time)}`} />
           {doctor.is_visiting && doctor.consultation_fee > 0 && <Row label="Fee" value={`Rs. ${doctor.consultation_fee.toLocaleString()}`} highlight />}
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="phone">Phone / WhatsApp Number</Label>
+          <Input
+            id="phone" value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="e.g. 0300 1234567"
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="reason">Reason for visit (optional)</Label>

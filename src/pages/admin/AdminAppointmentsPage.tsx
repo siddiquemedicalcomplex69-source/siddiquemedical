@@ -178,7 +178,16 @@ export default function AdminAppointmentsPage() {
                         <div className="font-medium">{format(parseISO(a.appointment_date), "MMM dd, yyyy")}</div>
                         <div className="text-xs text-muted-foreground">{a.start_time.substring(0, 5)} - {a.end_time.substring(0, 5)}</div>
                       </TableCell>
-                      <TableCell className="font-medium">{a.patient_name}</TableCell>
+                      <TableCell>
+                        <div className="font-medium">{a.patient_name}</div>
+                        {a.patient_phone ? (
+                          <a href={`tel:${a.patient_phone}`} className="text-xs text-[#0d766e] hover:underline flex items-center gap-1 mt-0.5">
+                            {a.patient_phone}
+                          </a>
+                        ) : (
+                          <div className="text-xs text-muted-foreground mt-0.5">No phone</div>
+                        )}
+                      </TableCell>
                       <TableCell>{a.doctor_name}</TableCell>
                       <TableCell>{a.department_name}</TableCell>
                       <TableCell>

@@ -220,6 +220,11 @@ export default function SchedulePage() {
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold text-red-800">
                             <span className="flex items-center gap-1"><CalendarIcon className="h-3.5 w-3.5" />{format(parse(a.appointment_date, "yyyy-MM-dd", new Date()), "MMM dd, yyyy")}</span>
                             <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{fmtTime(a.start_time)} – {fmtTime(a.end_time)}</span>
+                            {a.patient_phone && (
+                              <a href={`tel:${a.patient_phone}`} className="flex items-center gap-1 hover:underline">
+                                {a.patient_phone}
+                              </a>
+                            )}
                           </div>
                           {a.reason && <p className="text-sm text-muted-foreground">Reason: {a.reason}</p>}
                         </div>
@@ -268,6 +273,11 @@ export default function SchedulePage() {
                         </div>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{fmtTime(a.start_time)} – {fmtTime(a.end_time)}</span>
+                          {a.patient_phone && (
+                            <a href={`tel:${a.patient_phone}`} className="flex items-center gap-1 text-[#0d766e] hover:underline">
+                              {a.patient_phone}
+                            </a>
+                          )}
                         </div>
                         {a.reason && <p className="text-sm text-muted-foreground">Reason: {a.reason}</p>}
                       </div>

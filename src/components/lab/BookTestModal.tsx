@@ -11,7 +11,7 @@ import { CalendarDays, Info } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { notify } from "@/lib/notify";
-import { bookLabTest } from "@/lib/api";
+import { bookLabTest, updateProfile } from "@/lib/api";
 
 type Item = { id: string; name: string; code: string; price: number; sample_type?: string | null };
 
@@ -27,6 +27,7 @@ export function BookTestModal({
   const { user } = useAuth();
   const today = new Date().toISOString().slice(0, 10);
   const [date, setDate] = useState(today);
+  const [phone, setPhone] = useState(user?.phone || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!item) return null;
@@ -69,6 +70,12 @@ export function BookTestModal({
         });
       }
 
+      if (phone.trim() && phone.trim() !== user.phone) {
+        updateProfile(user.id, { phone: phone.trim() }).catch(err => {
+          console.error("Failed to update profile phone", err);
+        });
+      }
+
       toast.success("Test booked successfully.", {
         description: "You will be notified of your sample collection date soon.",
       });
@@ -104,17 +111,29 @@ export function BookTestModal({
           )}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="booking_date" className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 text-[#14b8a6]" /> Preferred booking date
-          </Label>
-          <Input
-            id="booking_date"
-            type="date"
-            min={today}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+        <div className="space-y-4 rounded-xl border border-border bg-surface p-4 text-sm">
+          <div className="space-y-1.5">
+            <Label className="flex items-center gap-1.5 text-[#0b1f3a]">
+              <CalendarDays className="h-4 w-4 text-[#14b8a6]" />
+              Preferred booking date
+            </Label>
+            <Input
+              type="date"
+              value={date}
+              min={today}
+              onChange={(e) => setDate(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Phone / WhatsApp Number</Label>
+            <Input
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="e.g. 0300 1234567"
+            />
+          </div>
         </div>
 
         <div className="flex gap-2 rounded-lg bg-amber-50 border border-amber-200 p-3 text-xs text-amber-900">

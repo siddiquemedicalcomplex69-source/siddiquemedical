@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,9 +8,13 @@ import type { Database } from "@/types/database";
 
 type Doctor = Database['public']['Views']['doctor_cards']['Row'];
 
-export function DoctorCard({ doctor }: { doctor: Doctor }) {
+export const DoctorCard = memo(function DoctorCard({ doctor }: { doctor: Doctor }) {
   const initials = doctor.full_name
     .replace(/^Dr\.?\s*/i, "").split(" ").map((s: string) => s[0]).slice(0, 2).join("");
+
+  const optimizedAvatar = doctor.avatar_url?.includes("cloudinary.com") 
+    ? doctor.avatar_url.replace("/upload/", "/upload/f_auto,q_auto,w_200/") 
+    : doctor.avatar_url;
 
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 hover-tilt hover:border-[#14b8a6]/60">
@@ -17,7 +22,7 @@ export function DoctorCard({ doctor }: { doctor: Doctor }) {
       <div className="flex items-start gap-4">
         <div className="relative">
           <Avatar className="h-16 w-16 rounded-full ring-2 ring-[#14b8a6]/40 transition-all duration-300 group-hover:ring-[#14b8a6] group-hover:pulse-ring">
-            <AvatarImage src={doctor.avatar_url || ""} alt={doctor.full_name} />
+            <AvatarImage src={optimizedAvatar || ""} alt={doctor.full_name} />
             <AvatarFallback className="rounded-full bg-gradient-to-br from-[#0b1f3a] to-[#14b8a6] text-white font-semibold">
               {initials}
             </AvatarFallback>
@@ -51,4 +56,4 @@ export function DoctorCard({ doctor }: { doctor: Doctor }) {
       </Button>
     </div>
   );
-}
+});

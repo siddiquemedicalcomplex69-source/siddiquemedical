@@ -214,8 +214,15 @@ function LabPortalPage() {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <div className="text-lg font-semibold text-[#0b1f3a]">{b.patient_name}</div>
-                      <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <Phone className="h-3.5 w-3.5" /> {b.patient_phone}
+                      <div className="mt-0.5 flex items-center gap-1.5 text-xs">
+                        <Phone className="h-3.5 w-3.5 text-[#0d766e]" />
+                        {b.patient_phone ? (
+                          <a href={`tel:${b.patient_phone}`} className="text-[#0d766e] hover:underline">
+                            {b.patient_phone}
+                          </a>
+                        ) : (
+                          <span className="text-muted-foreground">No phone</span>
+                        )}
                       </div>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <span className="font-medium text-[#0b1f3a]">{b.test_name}</span>

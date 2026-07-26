@@ -122,7 +122,15 @@ export default function AdminPatientsPage() {
                     <TableRow key={p.id}>
                       <TableCell className="font-medium">{p.full_name}</TableCell>
                       <TableCell>{p.email || "No email"}</TableCell>
-                      <TableCell>{p.phone || "N/A"}</TableCell>
+                      <TableCell>
+                        {p.phone ? (
+                          <a href={`tel:${p.phone}`} className="flex items-center gap-1.5 text-sm text-[#0d766e] hover:underline">
+                            {p.phone}
+                          </a>
+                        ) : (
+                          <span className="text-muted-foreground">N/A</span>
+                        )}
+                      </TableCell>
                       <TableCell>{format(parseISO(p.registered_at), "dd MMM yyyy")}</TableCell>
                       <TableCell>{p.total_appointments}</TableCell>
                       <TableCell>{p.total_lab_tests}</TableCell>
