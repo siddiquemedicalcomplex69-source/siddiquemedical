@@ -155,6 +155,16 @@ export async function getDoctorIdByProfileId(profileId: string): Promise<string 
   return data.id;
 }
 
+export async function getDoctorProfileDetails(profileId: string) {
+  const { data, error } = await supabase
+    .from("doctors")
+    .select("*")
+    .eq("profile_id", profileId)
+    .single();
+  if (error) return null;
+  return data;
+}
+
 export async function getDoctorAppointments(doctorId: string, dateStr: string): Promise<AppointmentDetail[]> {
   const { data, error } = await supabase
     .from("appointment_details")

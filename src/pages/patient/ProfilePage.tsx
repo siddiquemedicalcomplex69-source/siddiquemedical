@@ -19,7 +19,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/lib/auth";
-import { getProfile, updateProfile, uploadAvatar } from "@/lib/api";
+import { getProfile, updateProfile, uploadAvatar, getDoctorProfileDetails, updateDoctor } from "@/lib/api";
 
 const schema = z.object({
   full_name: z.string().min(1, "Full name is required"),
@@ -27,6 +27,9 @@ const schema = z.object({
   date_of_birth: z.string().optional(),
   gender: z.enum(["male", "female", "other"]),
   address: z.string().optional(),
+  qualification: z.string().optional(),
+  specialty: z.string().optional(),
+  bio: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -57,7 +60,16 @@ export default function ProfilePage() {
       date_of_birth: "",
       gender: "male",
       address: "",
+      qualification: "",
+      specialty: "",
+      bio: "",
     },
+  });
+
+  const { data: doctorProfile } = useQuery({
+    queryKey: ["doctorProfile", user?.id],
+    queryFn: () => getDoctorProfileDetails(user!.id),
+    enabled: !!user?.id && user.role === "doctor",
   });
 
   useEffect(() => {
@@ -68,10 +80,13 @@ export default function ProfilePage() {
         date_of_birth: profile.date_of_birth || "",
         gender: profile.gender || "male",
         address: profile.address || "",
+        qualification: doctorProfile?.qualification || "",
+        specialty: doctorProfile?.specialty || "",
+        bio: doctorProfile?.bio || "",
       });
       if (!selectedFile) setPreviewAvatar(profile.avatar_url);
     }
-  }, [profile, form, selectedFile]);
+  }, [profile, doctorProfile, form, selectedFile]);
 
   const mutation = useMutation({
     mutationFn: async (values: FormValues) => {
@@ -79,8 +94,15 @@ export default function ProfilePage() {
       if (selectedFile) {
         avatarUrl = await uploadAvatar(user!.id, selectedFile);
       }
-      const updates = { ...values, avatar_url: avatarUrl };
+      
+      const { qualification, specialty, bio, ...profileUpdates } = values;
+      
+      const updates = { ...profileUpdates, avatar_url: avatarUrl };
       await updateProfile(user!.id, updates);
+      
+      if (user!.role === "doctor" && doctorProfile?.id) {
+        await updateDoctor(doctorProfile.id, user!.id, { qualification, specialty, bio });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
@@ -177,6 +199,30 @@ export default function ProfilePage() {
                 <Label htmlFor="address">Address</Label>
                 <Textarea id="address" rows={3} {...form.register("address")} disabled={mutation.isPending} />
               </div>
+
+              {user?.role === "doctor" && (
+                <>
+                  <div className="pt-4 pb-2">
+                    <h3 className="text-lg font-medium">Professional Details</h3>
+                    <p className="text-sm text-muted-foreground">Information displayed on your doctor profile.</p>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <Label htmlFor="qualification">Qualifications (e.g., MBBS, FCPS)</Label>
+                      <Input id="qualification" {...form.register("qualification")} disabled={mutation.isPending} />
+                    </div>
+                    <div>
+                      <Label htmlFor="specialty">Specialty / Expertise</Label>
+                      <Input id="specialty" {...form.register("specialty")} disabled={mutation.isPending} />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="bio">Professional Bio</Label>
+                    <Textarea id="bio" rows={4} placeholder="Write a short professional bio..." {...form.register("bio")} disabled={mutation.isPending} />
+                  </div>
+                </>
+              )}
+
               <Button type="submit" disabled={mutation.isPending}>
                 {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Save Changes
