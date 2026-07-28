@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { addDays, format, isSameDay, startOfToday } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -21,7 +21,7 @@ export function SlotPicker({ doctorId, slotDurationMin, onSelect }: Props) {
   );
   const [selectedDate, setSelectedDate] = useState<Date>(today);
   const [noAvailMsg, setNoAvailMsg] = useState("");
-  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const dateStr = format(selectedDate, "yyyy-MM-dd");
 
   const { data: availability = [] } = useQuery({
