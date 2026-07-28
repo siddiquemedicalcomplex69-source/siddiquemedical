@@ -22,9 +22,6 @@ import {
   getDoctorAllAvailability,
   addDoctorAvailability,
   deleteDoctorAvailability,
-  getDoctorUpcomingLeaves,
-  addDoctorLeave,
-  deleteDoctorLeave,
 } from "@/lib/api";
 import type { Availability } from "@/types/database";
 
@@ -43,9 +40,6 @@ export default function AvailabilityPage() {
     () => Object.fromEntries(DAYS.map((d) => [d, { start: "09:00", end: "17:00", open: false }])) as any,
   );
 
-  const [leaveDate, setLeaveDate] = useState<Date | undefined>();
-  const [leaveReason, setLeaveReason] = useState("");
-
   const { data: doctorId } = useQuery({
     queryKey: ["doctor_id", user?.id],
     queryFn: () => getDoctorIdByProfileId(user!.id),
@@ -55,12 +49,6 @@ export default function AvailabilityPage() {
   const { data: blocks = [], isLoading: loadingBlocks } = useQuery({
     queryKey: ["availability", doctorId],
     queryFn: () => getDoctorAllAvailability(doctorId!),
-    enabled: !!doctorId,
-  });
-
-  const { data: leaves = [], isLoading: loadingLeaves } = useQuery({
-    queryKey: ["leaves", doctorId],
-    queryFn: () => getDoctorUpcomingLeaves(doctorId!, format(startOfToday(), "yyyy-MM-dd")),
     enabled: !!doctorId,
   });
 
@@ -84,26 +72,6 @@ export default function AvailabilityPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const addLeaveMut = useMutation({
-    mutationFn: (leave: { leave_date: string; reason: string }) =>
-      addDoctorLeave({ doctor_id: doctorId!, ...leave }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["leaves", doctorId] });
-      setLeaveDate(undefined);
-      setLeaveReason("");
-      toast.success("Leave marked");
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const deleteLeaveMut = useMutation({
-    mutationFn: (id: string) => deleteDoctorLeave(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["leaves", doctorId] });
-      toast.success("Leave removed");
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
 
   const addBlock = (day: Day) => {
     const d = drafts[day];
@@ -113,20 +81,6 @@ export default function AvailabilityPage() {
     }
     addBlockMut.mutate({ day, start_time: `${d.start}:00`, end_time: `${d.end}:00` });
   };
-
-  const addLeave = () => {
-    if (!leaveDate) {
-      toast.error("Please pick a date");
-      return;
-    }
-    const iso = format(leaveDate, "yyyy-MM-dd");
-    if (leaves.some((l) => l.leave_date === iso)) {
-      toast.error("You already have a leave marked for this date");
-      return;
-    }
-    addLeaveMut.mutate({ leave_date: iso, reason: leaveReason });
-  };
-
   // Loading is handled inline below
 
   return (
@@ -195,57 +149,6 @@ export default function AvailabilityPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader><CardTitle>Leave Management</CardTitle></CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex flex-wrap items-end gap-3">
-              <div>
-                <Label className="text-xs">Leave date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className={cn("w-[240px] justify-start text-left font-normal", !leaveDate && "text-muted-foreground")}>
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {leaveDate ? format(leaveDate, "EEEE, dd MMM yyyy") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={leaveDate} onSelect={setLeaveDate} initialFocus className={cn("p-3 pointer-events-auto")} />
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div className="flex-1 min-w-[200px]">
-                <Label className="text-xs">Reason (optional)</Label>
-                <Input value={leaveReason} onChange={(e) => setLeaveReason(e.target.value)} placeholder="e.g. Public holiday" disabled={addLeaveMut.isPending} />
-              </div>
-              <Button onClick={addLeave} disabled={addLeaveMut.isPending}>
-                {addLeaveMut.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Mark Leave
-              </Button>
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-foreground mb-4">Upcoming leaves</h3>
-              {loadingLeaves ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-14 w-full" />
-                  <Skeleton className="h-14 w-full" />
-                </div>
-              ) : leaves.length === 0 ? (
-                <EmptyState title="No upcoming leaves marked" className="p-6 sm:p-8" />
-              ) : leaves.map((l) => (
-                <div key={l.id} className="flex items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-sm">
-                  <div>
-                    <div className="font-medium">{format(parse(l.leave_date, "yyyy-MM-dd", new Date()), "EEEE, dd MMM yyyy")}</div>
-                    {l.reason && <div className="text-xs text-muted-foreground">{l.reason}</div>}
-                  </div>
-                  <Button size="icon" variant="ghost" onClick={() => deleteLeaveMut.mutate(l.id)} aria-label="Delete leave" disabled={deleteLeaveMut.isPending}>
-                    {deleteLeaveMut.isPending ? <Loader2 className="h-4 w-4 animate-spin text-destructive" /> : <Trash2 className="h-4 w-4 text-destructive" />}
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </main>
       <Footer />
     </div>

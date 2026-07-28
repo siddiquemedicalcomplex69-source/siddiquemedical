@@ -24,12 +24,10 @@ function fromMinutes(mins: number): string {
 export function generateSlots(
   date: Date,
   availability: Availability[],
-  leaves: string[], // ISO date strings YYYY-MM-DD
   bookedStartTimes: string[], // HH:MM already taken for this date
   slotDurationMin: number,
 ): TimeSlot[] {
   const iso = date.toISOString().slice(0, 10);
-  if (leaves.includes(iso)) return [];
 
   const day = DAY_NAMES[date.getDay()];
   const blocks = availability.filter((a) => a.day === day);

@@ -87,15 +87,6 @@ export async function getDoctorAvailability(doctorId: string): Promise<Availabil
   return data;
 }
 
-export async function getDoctorLeaves(doctorId: string, dateStr: string): Promise<string[]> {
-  const { data, error } = await supabase
-    .from("leaves")
-    .select("leave_date")
-    .eq("doctor_id", doctorId)
-    .eq("leave_date", dateStr);
-  if (error) return [];
-  return (data as any[]).map((l) => l.leave_date);
-}
 
 export async function getBookedSlots(doctorId: string, dateStr: string): Promise<string[]> {
   const { data, error } = await supabase
@@ -222,31 +213,6 @@ export async function deleteDoctorAvailability(id: string) {
   if (error) throw error;
 }
 
-export async function getDoctorUpcomingLeaves(doctorId: string, fromDateStr: string) {
-  const { data, error } = await supabase
-    .from("leaves")
-    .select("*")
-    .eq("doctor_id", doctorId)
-    .gte("leave_date", fromDateStr)
-    .order("leave_date", { ascending: true });
-  if (error) throw error;
-  return data;
-}
-
-export async function addDoctorLeave(leave: { doctor_id: string; leave_date: string; reason?: string }) {
-  const { error } = await supabase
-    .from("leaves")
-    .insert(leave);
-  if (error) throw error;
-}
-
-export async function deleteDoctorLeave(id: string) {
-  const { error } = await supabase
-    .from("leaves")
-    .delete()
-    .eq("id", id);
-  if (error) throw error;
-}
 
 // --- PHASE 2 PATIENT/PROFILE API ---
 

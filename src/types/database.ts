@@ -67,13 +67,6 @@ export type Availability = {
   created_at : string
 }
 
-export type Leave = {
-  id         : string
-  doctor_id  : string
-  leave_date : string       // ISO date string e.g. "2025-12-25"
-  reason     : string | null
-  created_at : string
-}
 
 export type Appointment = {
   id               : string
@@ -162,7 +155,6 @@ export type InsertDoctor      = Omit<Doctor, 'id' | 'created_at' | 'updated_at'>
 export type UpdateDoctor      = Partial<Omit<Doctor, 'id' | 'profile_id' | 'created_at' | 'updated_at'>>
 
 export type InsertAvailability = Omit<Availability, 'id' | 'created_at'>
-export type InsertLeave        = Omit<Leave, 'id' | 'created_at'>
 
 // ── LAB MODULE TYPES ──────────────────────────────────────────
 
@@ -286,11 +278,6 @@ export type Database = {
         Row    : Availability
         Insert : InsertAvailability
         Update : Partial<InsertAvailability>
-      }
-      leaves: {
-        Row    : Leave
-        Insert : InsertLeave
-        Update : Partial<InsertLeave>
       }
       appointments: {
         Row    : Appointment

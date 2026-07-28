@@ -69,6 +69,9 @@ export default function AppointmentsPage() {
 
       toast.success("Appointment cancelled");
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
+      if (appointment) {
+        queryClient.invalidateQueries({ queryKey: ['bookedSlots', appointment.doctor_id] });
+      }
     },
     onError: (e) => {
       toast.error(e instanceof Error ? e.message : "Failed to cancel");

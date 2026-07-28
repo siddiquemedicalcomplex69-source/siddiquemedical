@@ -9,7 +9,6 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ── CLEAN SLATE (safe re-run) ───────────────────────────────
 DROP TABLE IF EXISTS notifications     CASCADE;
 DROP TABLE IF EXISTS appointments      CASCADE;
-DROP TABLE IF EXISTS leaves            CASCADE;
 DROP TABLE IF EXISTS availability      CASCADE;
 DROP TABLE IF EXISTS doctors           CASCADE;
 DROP TABLE IF EXISTS departments       CASCADE;
@@ -164,22 +163,6 @@ CREATE TABLE availability (
 
 CREATE INDEX idx_availability_doctor ON availability(doctor_id);
 
--- ============================================================
--- TABLE 5: LEAVES
--- One-off dates when a doctor is unavailable
--- Overrides availability for that date
--- ============================================================
-CREATE TABLE leaves (
-  id          UUID        PRIMARY KEY DEFAULT uuid_generate_v4(),
-  doctor_id   UUID        NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
-  leave_date  DATE        NOT NULL,
-  reason      TEXT,
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-  CONSTRAINT unique_doctor_leave_date UNIQUE (doctor_id, leave_date)
-);
-
-CREATE INDEX idx_leaves_doctor_date ON leaves(doctor_id, leave_date);
 
 -- ============================================================
 -- TABLE 6: APPOINTMENTS
@@ -248,7 +231,6 @@ ALTER TABLE profiles      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE departments   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE doctors       ENABLE ROW LEVEL SECURITY;
 ALTER TABLE availability  ENABLE ROW LEVEL SECURITY;
-ALTER TABLE leaves        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE appointments  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
@@ -340,22 +322,6 @@ CREATE POLICY "Admin can manage all availability"
   ON availability FOR ALL
   USING (get_my_role() = 'admin');
 
--- ────────────────────────────────────────────────────────────
--- LEAVES policies
--- ────────────────────────────────────────────────────────────
-CREATE POLICY "Anyone can view leaves"
-  ON leaves FOR SELECT
-  USING (TRUE);
-
-CREATE POLICY "Doctors can manage their own leaves"
-  ON leaves FOR ALL
-  USING (
-    doctor_id = get_my_doctor_id()
-  );
-
-CREATE POLICY "Admin can manage all leaves"
-  ON leaves FOR ALL
-  USING (get_my_role() = 'admin');
 
 -- ────────────────────────────────────────────────────────────
 -- APPOINTMENTS policies
@@ -476,7 +442,6 @@ GRANT USAGE  ON SCHEMA public TO anon, authenticated;
 GRANT SELECT ON departments TO anon;
 GRANT SELECT ON doctors     TO anon;
 GRANT SELECT ON availability TO anon;
-GRANT SELECT ON leaves      TO anon;
 GRANT SELECT ON doctor_cards TO anon, authenticated;
 GRANT SELECT ON appointment_details TO authenticated;
 GRANT ALL    ON ALL TABLES IN SCHEMA public TO authenticated;
