@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { supabase } from "./supabase";
-import type { Department, DoctorCard, Availability, AppointmentDetail, InsertAppointment, InsertLabBooking, UpdateLabBooking } from "@/types/database";
+import type { Department, DoctorCard, Availability, AppointmentDetail, InsertAppointment, InsertLabBooking, UpdateLabBooking, Profile, Doctor } from "@/types/database";
 import { startOfToday, format } from "date-fns";
 
 export async function getDepartments(): Promise<Department[]> {
@@ -126,9 +125,8 @@ export async function getUserAppointments(userId: string): Promise<AppointmentDe
 }
 
 export async function cancelAppointment(id: string) {
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("appointments")
-    // @ts-ignore
     .update({ status: "cancelled" })
     .eq("id", id);
   if (error) throw error;
@@ -137,7 +135,7 @@ export async function cancelAppointment(id: string) {
 // --- PHASE 2 DOCTOR API ---
 
 export async function getDoctorIdByProfileId(profileId: string): Promise<string | null> {
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("doctors")
     .select("id")
     .eq("profile_id", profileId)
@@ -146,14 +144,14 @@ export async function getDoctorIdByProfileId(profileId: string): Promise<string 
   return data.id;
 }
 
-export async function getDoctorProfileDetails(profileId: string) {
-  const { data, error } = await supabase
+export async function getDoctorProfileDetails(profileId: string): Promise<Doctor | null> {
+  const { data, error } = await (supabase as any)
     .from("doctors")
     .select("*")
     .eq("profile_id", profileId)
     .single();
   if (error) return null;
-  return data;
+  return data as any as Doctor;
 }
 
 export async function getDoctorAppointments(doctorId: string, dateStr: string): Promise<AppointmentDetail[]> {
@@ -181,9 +179,8 @@ export async function getDoctorPendingAppointments(doctorId: string, fromDateStr
 }
 
 export async function updateAppointmentStatus(id: string, newStatus: string) {
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("appointments")
-    // @ts-ignore
     .update({ status: newStatus })
     .eq("id", id);
   if (error) throw error;
@@ -199,7 +196,7 @@ export async function getDoctorAllAvailability(doctorId: string): Promise<Availa
 }
 
 export async function addDoctorAvailability(block: { doctor_id: string; day: string; start_time: string; end_time: string }) {
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("availability")
     .insert(block);
   if (error) throw error;
@@ -216,18 +213,18 @@ export async function deleteDoctorAvailability(id: string) {
 
 // --- PHASE 2 PATIENT/PROFILE API ---
 
-export async function getProfile(userId: string) {
+export async function getProfile(userId: string): Promise<Profile> {
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", userId)
     .single();
   if (error) throw error;
-  return data;
+  return data as any as Profile;
 }
 
 export async function updateProfile(userId: string, updates: any) {
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("profiles")
     .update(updates)
     .eq("id", userId);
@@ -277,22 +274,22 @@ export async function getAllAppointments(): Promise<AppointmentDetail[]> {
 }
 
 export async function getAllPatients() {
-  const { data, error } = await supabase.rpc('admin_get_patients_with_email');
+  const { data, error } = await (supabase.rpc as any)('admin_get_patients_with_email');
   if (error) throw error;
 
   // We need to also fetch appointment and lab test counts for each patient
-  const { data: allAppts } = await supabase.from("appointments").select("patient_id");
-  const { data: allLabs } = await supabase.from("lab_bookings").select("patient_id");
+  const { data: allAppts } = await (supabase as any).from("appointments").select("patient_id");
+  const { data: allLabs } = await (supabase as any).from("lab_bookings").select("patient_id");
   
-  return data.map((p: any) => ({
+  return (data as any[]).map((p: any) => ({
     ...p,
-    total_appointments: allAppts?.filter(a => a.patient_id === p.id).length || 0,
-    total_lab_tests: allLabs?.filter(l => l.patient_id === p.id).length || 0
+    total_appointments: (allAppts as any[])?.filter(a => a.patient_id === p.id).length || 0,
+    total_lab_tests: (allLabs as any[])?.filter(l => l.patient_id === p.id).length || 0
   }));
 }
 
 export async function togglePatientActive(id: string, currentStatus: boolean) {
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("profiles")
     .update({ is_active: !currentStatus })
     .eq("id", id);
@@ -340,17 +337,17 @@ export async function adminCreateDoctor(params: {
   doc_is_visiting: boolean;
   doc_slot_duration: number;
 }) {
-  const { data, error } = await supabase.rpc('admin_create_doctor', params);
+  const { data, error } = await (supabase.rpc as any)('admin_create_doctor', params);
   if (error) throw error;
   return data;
 }
 
 export async function updateDoctor(doctorId: string, profileId: string | null | undefined, updates: any, name?: string) {
   if (name && profileId) {
-    const { error: pErr } = await supabase.from('profiles').update({ full_name: name }).eq('id', profileId);
+    const { error: pErr } = await (supabase as any).from('profiles').update({ full_name: name }).eq('id', profileId);
     if (pErr) throw pErr;
   }
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("doctors")
     .update(updates)
     .eq("id", doctorId);
@@ -358,7 +355,7 @@ export async function updateDoctor(doctorId: string, profileId: string | null | 
 }
 
 export async function toggleDoctorActive(doctorId: string, currentStatus: boolean) {
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("doctors")
     .update({ is_active: !currentStatus })
     .eq("id", doctorId);
@@ -366,17 +363,17 @@ export async function toggleDoctorActive(doctorId: string, currentStatus: boolea
 }
 
 export async function addDepartment(dept: { name: string; description: string; icon: string }) {
-  const { error } = await supabase.from("departments").insert(dept);
+  const { error } = await (supabase as any).from("departments").insert(dept);
   if (error) throw error;
 }
 
 export async function updateDepartment(id: string, updates: any) {
-  const { error } = await supabase.from("departments").update(updates).eq("id", id);
+  const { error } = await (supabase as any).from("departments").update(updates).eq("id", id);
   if (error) throw error;
 }
 
 export async function toggleDepartmentActive(id: string, currentStatus: boolean) {
-  const { error } = await supabase.from("departments").update({ is_active: !currentStatus }).eq("id", id);
+  const { error } = await (supabase as any).from("departments").update({ is_active: !currentStatus }).eq("id", id);
   if (error) throw error;
 }
 
@@ -430,9 +427,9 @@ export async function getAllLabBookings() {
 }
 
 export async function updateLabBooking(id: string, updates: UpdateLabBooking) {
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("lab_bookings")
-    .update(updates as any)
+    .update(updates)
     .eq("id", id);
   if (error) throw error;
 }

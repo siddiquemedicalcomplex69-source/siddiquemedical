@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,6 +35,8 @@ export default function LoginPage() {
         navigate("/admin/dashboard");
       } else if (user.role === 'doctor') {
         navigate("/schedule");
+      } else if (user.role === 'lab_staff') {
+        navigate("/lab/portal");
       } else {
         navigate("/");
       }
@@ -57,7 +58,8 @@ export default function LoginPage() {
 
       if (data.user) {
         const { data: profile } = await supabase.from('profiles').select('is_active, role').eq('id', data.user.id).single();
-        if (profile && !profile.is_active && profile.role !== 'admin') {
+        const p = profile as any;
+        if (p && !p.is_active && p.role !== 'admin') {
           return;
         }
 
@@ -65,10 +67,12 @@ export default function LoginPage() {
         
         if (redirectTo) {
           navigate(redirectTo);
-        } else if (profile?.role === 'admin') {
+        } else if (p?.role === 'admin') {
           navigate("/admin/dashboard");
-        } else if (profile?.role === 'doctor') {
+        } else if (p?.role === 'doctor') {
           navigate("/schedule");
+        } else if (p?.role === 'lab_staff') {
+          navigate("/lab/portal");
         } else {
           navigate("/");
         }

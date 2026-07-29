@@ -28,6 +28,7 @@ const SLIDES = [
     accent: "when you need it most.",
     subtitle: "World-class specialists, modern facilities, and appointments that fit your day.",
     cta: "Book an Appointment",
+    href: "/doctors",
   },
   {
     img: "https://picsum.photos/1600/900?random=11",
@@ -36,14 +37,16 @@ const SLIDES = [
     accent: "always by your side.",
     subtitle: "Round-the-clock emergency services staffed by senior consultants and rapid response teams.",
     cta: "Learn More",
+    href: "/doctors",
   },
   {
     img: "https://picsum.photos/1600/900?random=12",
-    kicker: "10 specialties. One roof.",
-    title: "Trusted specialists,",
-    accent: "compassionate teams.",
-    subtitle: "From cardiology to pediatrics — meet consultants who genuinely listen.",
-    cta: "Meet Our Doctors",
+    kicker: "Fast & accurate diagnostics",
+    title: "Lab tests,",
+    accent: "from your phone.",
+    subtitle: "Browse our full range of diagnostic tests, check prices, and book your test online. Come in, give your sample, collect your report.",
+    cta: "View Lab Tests",
+    href: "/lab-tests",
   },
 ];
 
@@ -138,7 +141,7 @@ function Hero() {
               size="lg"
               className="bg-[#14b8a6] hover:bg-[#0d9488] text-white shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 btn-shimmer h-12 px-7 text-base"
             >
-              <Link to="/doctors">{s.cta} <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
+              <Link to={s.href}>{s.cta} <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
             </Button>
             <Button
               asChild

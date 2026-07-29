@@ -31,6 +31,7 @@ export async function notifyAdmins(params: Omit<NotifyParams, 'user_id'>) {
   if (error) {
     console.error('Failed to fetch admins:', error.message)
     toast.error(`Admin fetch failed: ${error.message}`);
+    return;
   }
 
   for (const admin of castAdmins ?? []) {

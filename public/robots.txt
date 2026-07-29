@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /appointments
+Disallow: /my-tests
+Disallow: /profile
+Disallow: /schedule
+Disallow: /availability
+Disallow: /admin/
+Disallow: /lab/
+Disallow: /notifications

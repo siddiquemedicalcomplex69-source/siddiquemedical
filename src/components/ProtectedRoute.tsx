@@ -21,12 +21,11 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import type { UserRole } from '@/types/database'
 
-// ─── Where each role lands after login ───────────────────────
 const ROLE_DASHBOARDS: Record<UserRole, string> = {
   patient   : '/appointments',
   doctor    : '/schedule',
   admin     : '/admin/dashboard',
-  lab_staff : '/lab-staff/dashboard',
+  lab_staff : '/lab/portal',
 }
 
 interface ProtectedRouteProps {

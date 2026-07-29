@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from "react";
 import { format, parse, startOfToday } from "date-fns";
 import { CalendarIcon, Plus, Trash2, Loader2 } from "lucide-react";

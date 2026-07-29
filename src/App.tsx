@@ -38,6 +38,7 @@ const LabPortalPage = lazy(() => import("@/pages/lab/LabPortalPage"));
 
 // Global routes
 const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 
 // Configure React Query for optimal caching
 const queryClient = new QueryClient({
@@ -74,7 +75,7 @@ function App() {
               <Route path="/lab-tests" element={<LabTestsPage />} />
 
               {/* Patient routes */}
-              <Route path="/appointments" element={<AppointmentsPage />} />
+              <Route path="/appointments" element={<ProtectedRoute allowedRoles={['patient']}><AppointmentsPage /></ProtectedRoute>} />
               <Route path="/my-tests" element={<ProtectedRoute allowedRoles={['patient']}><MyTestsPage /></ProtectedRoute>} />
 
               {/* Phase 2 routes */}
@@ -97,6 +98,9 @@ function App() {
               
               {/* Global routes */}
               <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+              
+              {/* Catch-all 404 route */}
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
         </BrowserRouter>

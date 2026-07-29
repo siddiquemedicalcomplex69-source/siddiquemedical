@@ -80,7 +80,7 @@ export function BookingModal({ open, onOpenChange, doctor, date, slot }: Props) 
       });
       onOpenChange(false);
       queryClient.invalidateQueries({ queryKey: ['appointments'] });
-      queryClient.invalidateQueries({ queryKey: ['bookedSlots', doctor.doctor_id] });
+      queryClient.invalidateQueries({ queryKey: ['bookedSlots', doctor.doctor_id, format(date, "yyyy-MM-dd")] });
       navigate("/appointments");
     },
     onError: (e) => {
