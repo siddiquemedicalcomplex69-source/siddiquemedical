@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
-import { FlaskConical, CalendarDays, FileText, Hourglass, XCircle } from "lucide-react";
+import { FlaskConical, CalendarDays, FileText, Hourglass, XCircle, Loader2 } from "lucide-react";
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
 import { Reveal, Stagger } from "@/components/shared/Reveal";
@@ -112,8 +112,18 @@ function MyTestsPage() {
 
                   {t.status === "pending" && (
                     <div className="mt-4 flex justify-end">
-                      <Button variant="outline" size="sm" onClick={() => cancel(t.id)}>
-                        <XCircle className="mr-1.5 h-4 w-4" /> Cancel booking
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        disabled={cancelMutation.isPending && cancelMutation.variables === t.id}
+                        onClick={() => cancel(t.id)}
+                      >
+                        {cancelMutation.isPending && cancelMutation.variables === t.id ? (
+                          <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
+                        ) : (
+                          <XCircle className="mr-1.5 h-4 w-4" />
+                        )}
+                        {cancelMutation.isPending && cancelMutation.variables === t.id ? "Cancelling..." : "Cancel booking"}
                       </Button>
                     </div>
                   )}

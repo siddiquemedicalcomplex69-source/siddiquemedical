@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import { format, parseISO, isBefore, startOfToday } from "date-fns";
-import { CalendarPlus, Clock, Stethoscope, XCircle } from "lucide-react";
+import { CalendarPlus, Clock, Stethoscope, XCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navbar } from "@/components/shared/Navbar";
@@ -161,6 +161,7 @@ export default function AppointmentsPage() {
                     key={a.id}
                     appt={a}
                     onCancel={() => cancelMutation.mutate(a.id)}
+                    isCancelling={cancelMutation.isPending && cancelMutation.variables === a.id}
                   />
                 ))}
               </div>
@@ -184,7 +185,7 @@ export default function AppointmentsPage() {
   );
 }
 
-function AppointmentRow({ appt, onCancel }: { appt: AppointmentDetail; onCancel?: () => void }) {
+function AppointmentRow({ appt, onCancel, isCancelling }: { appt: AppointmentDetail; onCancel?: () => void; isCancelling?: boolean }) {
   const date = parseISO(appt.appointment_date);
   const statusVariant: Record<string, string> = {
     pending: "bg-amber-100 text-amber-800 animate-pulse",
@@ -219,15 +220,19 @@ function AppointmentRow({ appt, onCancel }: { appt: AppointmentDetail; onCancel?
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-[#0b1f3a]">Rs. {appt.fee_charged || "---"}</span>
+          {!!appt.fee_charged && appt.fee_charged > 0 && (
+            <span className="text-sm font-semibold text-[#0b1f3a]">Rs. {appt.fee_charged.toLocaleString()}</span>
+          )}
           {onCancel && appt.status === "pending" && (
             <Button
               variant="outline"
               size="sm"
+              disabled={isCancelling}
               onClick={onCancel}
               className="border-rose-300 text-rose-600 hover:bg-rose-500 hover:text-white hover:border-rose-500 hover:scale-105 active:scale-95 transition-all duration-300"
             >
-              <XCircle className="mr-1 h-4 w-4" /> Cancel
+              {isCancelling ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <XCircle className="mr-1 h-4 w-4" />}
+              {isCancelling ? "Cancelling..." : "Cancel"}
             </Button>
           )}
         </div>

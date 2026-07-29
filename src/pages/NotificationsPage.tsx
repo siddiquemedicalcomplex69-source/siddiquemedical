@@ -22,7 +22,9 @@ function timeAgo(dateString: string): string {
   if (seconds < 60)    return 'Just now'
   if (seconds < 3600)  return `${Math.floor(seconds / 60)} mins ago`
   if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`
-  return `${Math.floor(seconds / 86400)} days ago`
+  if (seconds < 2592000) return `${Math.floor(seconds / 86400)} days ago`
+  if (seconds < 31536000) return `${Math.floor(seconds / 2592000)} months ago`
+  return `${Math.floor(seconds / 31536000)} years ago`
 }
 
 function getNotificationIcon(type: string) {

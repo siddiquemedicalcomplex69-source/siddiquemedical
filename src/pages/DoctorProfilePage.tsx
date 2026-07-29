@@ -184,7 +184,6 @@ export default function DoctorProfilePage() {
               <ul className="space-y-2.5 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#14b8a6]" /> {doctor.slot_duration_min}-minute consultation</li>
                 <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#14b8a6]" /> On-site at {settings?.hospital_name || "Siddique Medical Complex"}</li>
-                <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#14b8a6]" /> Free rescheduling up to 4 hours prior</li>
               </ul>
               {!user && (
                 <Button
