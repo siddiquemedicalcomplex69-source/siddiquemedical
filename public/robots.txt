@@ -8,3 +8,4 @@ Disallow: /availability
 Disallow: /admin/
 Disallow: /lab/
 Disallow: /notifications
+Sitemap: https://siddiquemedicalskg.com/sitemap.xml
