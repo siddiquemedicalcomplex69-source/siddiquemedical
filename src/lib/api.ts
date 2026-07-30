@@ -317,9 +317,10 @@ export async function getGlobalSettings() {
 }
 
 export async function updateGlobalSettings(updates: any) {
-  const { error, data } = await supabase
+  const { error, data } = await (supabase as any)
     .from("settings")
-    .upsert({ id: "global", ...updates })
+    .update(updates)
+    .eq("id", "global")
     .select();
   if (error) throw error;
 }
