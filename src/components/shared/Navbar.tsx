@@ -10,7 +10,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/lib/auth";
 import { getGlobalSettings } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, timeAgo } from "@/lib/utils";
 import { AnnouncementTicker } from "./AnnouncementTicker";
 import { supabase } from "@/lib/supabase";
 import { Notification } from "@/types/database";
@@ -364,7 +364,7 @@ function NotificationBell() {
                   <div className="flex justify-between items-start mb-1">
                     <span className={cn("text-sm font-semibold", !n.is_read ? "text-[#0b1f3a]" : "text-muted-foreground")}>{n.title}</span>
                     <span className="text-[10px] text-muted-foreground/70 shrink-0 ml-2">
-                      {Math.floor((Date.now() - new Date(n.created_at).getTime()) / 1000) < 60 ? 'Just now' : `${Math.floor((Date.now() - new Date(n.created_at).getTime()) / 60000)}m ago`}
+                      {timeAgo(n.created_at)}
                     </span>
                   </div>
                   <p className={cn("text-xs line-clamp-2", !n.is_read ? "text-muted-foreground" : "text-muted-foreground/60")}>

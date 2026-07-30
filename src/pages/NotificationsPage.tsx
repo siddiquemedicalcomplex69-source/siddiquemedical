@@ -12,20 +12,12 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { cn, timeAgo } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { Notification } from "@/types/database";
 
-function timeAgo(dateString: string): string {
-  const seconds = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000)
-  if (seconds < 60)    return 'Just now'
-  if (seconds < 3600)  return `${Math.floor(seconds / 60)} mins ago`
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`
-  if (seconds < 2592000) return `${Math.floor(seconds / 86400)} days ago`
-  if (seconds < 31536000) return `${Math.floor(seconds / 2592000)} months ago`
-  return `${Math.floor(seconds / 31536000)} years ago`
-}
+
 
 function getNotificationIcon(type: string) {
   switch (type) {
